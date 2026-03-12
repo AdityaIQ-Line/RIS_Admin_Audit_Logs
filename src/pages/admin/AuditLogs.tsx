@@ -22,6 +22,10 @@ import {
   Bot,
   LayoutTemplate,
   Images,
+  Download,
+  Network,
+  CreditCard,
+  Unplug,
 } from 'lucide-react'
 
 const HUB_ITEMS = [
@@ -102,6 +106,30 @@ const HUB_ITEMS = [
     description: 'Audit all radiology image access, series views, downloads, prints, and external viewer access — ensuring patient data privacy, detecting unauthorized access, and maintaining medico-legal traceability',
     icon: Images,
     route: '/admin/image-access-viewing-logs',
+  },
+  {
+    title: 'Image Download & Export',
+    description: 'Audit study downloads, series/image exports, DICOM and non-DICOM exports, CD/DVD burns, secure links, and denied export attempts for compliance and traceability',
+    icon: Download,
+    route: '/admin/image-download-export-logs',
+  },
+  {
+    title: 'DICOM Ingest & Routing',
+    description: 'Audit DICOM study receipt, validation, rejection, routing, retries, merge/split events between modalities and PACS for data integrity and troubleshooting',
+    icon: Network,
+    route: '/admin/dicom-ingest-routing-logs',
+  },
+  {
+    title: 'Payment Collection',
+    description: 'Audit payment collection, discounts, adjustments, refunds, voids, and collection failures — ensuring financial accountability and reconciliation',
+    icon: CreditCard,
+    route: '/admin/payment-collection-logs',
+  },
+  {
+    title: 'Integration Failures (RIS–PACS–LIMS)',
+    description: 'Track failed integration events between RIS, PACS, and LIMS — DICOM, HL7, API failures for quick identification and resolution',
+    icon: Unplug,
+    route: '/admin/integration-failures-logs',
   },
 ]
 

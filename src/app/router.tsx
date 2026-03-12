@@ -27,6 +27,10 @@ import { CriticalResultFlaggingLogs } from "../pages/admin/CriticalResultFlaggin
 import { AIDraftGenerationLogs } from "../pages/admin/AIDraftGenerationLogs"
 import { TemplateApplicationLogs } from "../pages/admin/TemplateApplicationLogs"
 import { ImageAccessViewingLogs } from "../pages/admin/ImageAccessViewingLogs"
+import { ImageDownloadExportLogs } from "../pages/admin/ImageDownloadExportLogs"
+import { DICOMIngestRoutingLogs } from "../pages/admin/DICOMIngestRoutingLogs"
+import { PaymentCollectionLogs } from "../pages/admin/PaymentCollectionLogs"
+import { IntegrationFailuresLogs } from "../pages/admin/IntegrationFailuresLogs"
 import { SystemSettings } from "../pages/admin/SystemSettings"
 import { AdminWorklist } from "../pages/admin/AdminWorklist"
 import { AdminFacilityDetails } from "../pages/admin/AdminFacilityDetails"
@@ -85,6 +89,10 @@ export const router = createBrowserRouter([
           { path: "/admin/ai-draft-generation-logs", element: <AIDraftGenerationLogs /> },
           { path: "/admin/template-application-logs", element: <TemplateApplicationLogs /> },
           { path: "/admin/image-access-viewing-logs", element: <ImageAccessViewingLogs /> },
+          { path: "/admin/image-download-export-logs", element: <ImageDownloadExportLogs /> },
+          { path: "/admin/dicom-ingest-routing-logs", element: <DICOMIngestRoutingLogs /> },
+          { path: "/admin/payment-collection-logs", element: <PaymentCollectionLogs /> },
+          { path: "/admin/integration-failures-logs", element: <IntegrationFailuresLogs /> },
           { path: "/admin/settings", element: <Navigate to="/admin/audit-logs" replace /> },
           { path: "/admin/worklist", element: <Navigate to="/admin/audit-logs" replace /> },
           { path: "/admin/facility", element: <Navigate to="/admin/audit-logs" replace /> },
