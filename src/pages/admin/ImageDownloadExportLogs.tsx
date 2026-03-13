@@ -508,6 +508,7 @@ export function ImageDownloadExportLogs() {
                     <TableHead className="whitespace-nowrap">Modality</TableHead>
                     <TableHead className="whitespace-nowrap">Export Type</TableHead>
                     <TableHead className="whitespace-nowrap">Files</TableHead>
+                    <TableHead className="whitespace-nowrap">File Size (MB)</TableHead>
                     <TableHead className="whitespace-nowrap">User Role</TableHead>
                     <TableHead className="whitespace-nowrap">Status</TableHead>
                   </TableRow>
@@ -515,7 +516,7 @@ export function ImageDownloadExportLogs() {
                 <TableBody>
                   {paginatedLogs.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={11} className="text-center py-12 text-muted-foreground">No records found matching the current filters.</TableCell>
+                      <TableCell colSpan={12} className="text-center py-12 text-muted-foreground">No records found matching the current filters.</TableCell>
                     </TableRow>
                   ) : (
                     paginatedLogs.map((log, idx) => {
@@ -531,6 +532,7 @@ export function ImageDownloadExportLogs() {
                           <TableCell className="whitespace-nowrap"><span className="text-sm">{log.modality}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="text-sm">{log.exportType}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="font-mono tabular-nums text-sm">{log.filesExported}</span></TableCell>
+                          <TableCell className="whitespace-nowrap"><span className="font-mono tabular-nums text-sm">{log.fileSizeMB}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="text-sm">{log.userRole}</span></TableCell>
                           <TableCell className="whitespace-nowrap">
                             {log.exportStatus === "Success" && <Badge variant="default" className="gap-1"><CheckCircle strokeWidth={ICON_STROKE_WIDTH} className="size-3" />Success</Badge>}
