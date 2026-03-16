@@ -283,27 +283,6 @@ export function RoleBasedAuditVisibility() {
             <StatCard title="Limited Access" value={stats.limitedAccess} description="Limited visibility" icon={User} iconStrokeWidth={ICON_STROKE_WIDTH} iconColor="text-muted-foreground" />
           </div>
 
-          {/* Role-Based Visibility Matrix (from Story 23) */}
-          <Card className="p-4">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-3">Role-Based Visibility Matrix</p>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm border-collapse">
-                <thead>
-                  <tr className="border-b border-border">
-                    <th className="text-left py-2 pr-4 font-medium">Role</th>
-                    <th className="text-left py-2 font-medium">Audit Visibility</th>
-                  </tr>
-                </thead>
-                <tbody className="text-muted-foreground">
-                  <tr className="border-b border-border"><td className="py-2 pr-4">Radiologist</td><td className="py-2">Only own report edits, case access logs</td></tr>
-                  <tr className="border-b border-border"><td className="py-2 pr-4">Technician</td><td className="py-2">Case assignments and workflow actions</td></tr>
-                  <tr className="border-b border-border"><td className="py-2 pr-4">Facility Admin</td><td className="py-2">All audit logs within the facility</td></tr>
-                  <tr className="border-b border-border"><td className="py-2 pr-4">Super Admin</td><td className="py-2">Full visibility across all facilities and modules</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </Card>
-
           <Card className="p-[16px]">
             <div className="flex flex-col gap-3 p-[0px]">
               <div className="flex items-center justify-between gap-3">
