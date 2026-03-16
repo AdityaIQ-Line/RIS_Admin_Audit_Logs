@@ -349,7 +349,7 @@ export function PaymentCollectionLogs() {
   const filteredLogs = React.useMemo(() => {
     return mockLogs.filter((log) => {
       const q = searchFilter.toLowerCase();
-      if (q && ![log.auditId, log.invoiceNumber, log.patientId, log.collectedBy, log.visitId].some((v) => String(v).toLowerCase().includes(q))) return false;
+      if (q && ![log.auditId, log.invoiceNumber, log.patientId, log.collectedBy, log.visitId, log.transactionRef ?? ""].some((v) => String(v).toLowerCase().includes(q))) return false;
       if (eventTypeFilter !== "all" && log.eventType !== eventTypeFilter) return false;
       if (statusFilter !== "all" && log.status !== statusFilter) return false;
       if (isDateRangeActive) {
@@ -437,7 +437,7 @@ export function PaymentCollectionLogs() {
                   <div className="bg-background relative rounded-[8px] w-80">
                     <div className="flex items-center gap-2 px-3 py-[7.5px]">
                       <Search strokeWidth={ICON_STROKE_WIDTH} className="size-5 text-muted-foreground shrink-0" />
-                      <input placeholder="Search by audit ID, invoice, UHID, visit, collected by…" value={searchFilter} onChange={(e) => setSearchFilter(e.target.value)} className="flex-1 min-w-0 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none" />
+                      <input placeholder="Search by audit ID, invoice, UHID, visit ID, transaction ref, collected by…" value={searchFilter} onChange={(e) => setSearchFilter(e.target.value)} className="flex-1 min-w-0 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none" />
                     </div>
                     <div aria-hidden="true" className="absolute border border-border inset-[-1px] pointer-events-none rounded-[4px]" />
                   </div>
@@ -493,9 +493,11 @@ export function PaymentCollectionLogs() {
                     <TableHead className="whitespace-nowrap">Timestamp</TableHead>
                     <TableHead className="whitespace-nowrap">Event Type</TableHead>
                     <TableHead className="whitespace-nowrap">Invoice</TableHead>
+                    <TableHead className="whitespace-nowrap">Visit ID</TableHead>
                     <TableHead className="whitespace-nowrap">Patient UHID</TableHead>
                     <TableHead className="whitespace-nowrap">Total (₹)</TableHead>
                     <TableHead className="whitespace-nowrap">Collected (₹)</TableHead>
+                    <TableHead className="whitespace-nowrap">Transaction Reference No.</TableHead>
                     <TableHead className="whitespace-nowrap">Mode</TableHead>
                     <TableHead className="whitespace-nowrap">Collected By</TableHead>
                     <TableHead className="whitespace-nowrap">Status</TableHead>
@@ -504,21 +506,23 @@ export function PaymentCollectionLogs() {
                 <TableBody>
                   {paginatedLogs.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={11} className="text-center py-12 text-muted-foreground">No records found matching the current filters.</TableCell>
+                      <TableCell colSpan={13} className="text-center py-12 text-muted-foreground">No records found matching the current filters.</TableCell>
                     </TableRow>
                   ) : (
                     paginatedLogs.map((log, idx) => {
                       const srNo = (currentPage - 1) * ITEMS_PER_PAGE + idx + 1;
                       return (
-                        <TableRow key={log.auditId} className="cursor-pointer hover:bg-muted/50" onClick={() => openDetail(log)}>
+                        <TableRow key={log.auditId}>
                           <TableCell className="text-right whitespace-nowrap"><span className="font-mono tabular-nums text-muted-foreground text-sm">{srNo}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="font-mono tabular-nums text-sm">{log.auditId}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="font-mono tabular-nums text-sm">{formatTs(log.timestamp)}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><Badge variant="outline" className="whitespace-nowrap">{log.eventType}</Badge></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="font-mono text-sm">{log.invoiceNumber}</span></TableCell>
+                          <TableCell className="whitespace-nowrap"><span className="font-mono tabular-nums text-sm">{log.visitId}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="font-mono tabular-nums text-sm">{log.patientId}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="font-mono tabular-nums text-sm">{log.totalAmount.toLocaleString("en-IN")}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="font-mono tabular-nums text-sm">{log.amountCollected.toLocaleString("en-IN")}</span></TableCell>
+                          <TableCell className="whitespace-nowrap"><span className="font-mono text-sm">{log.transactionRef ?? "—"}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="text-sm">{log.paymentMode}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="text-sm">{log.collectedBy}</span></TableCell>
                           <TableCell className="whitespace-nowrap">
@@ -563,7 +567,7 @@ export function PaymentCollectionLogs() {
                   <DetailRow label="Balance (₹)" value={selectedLog.balanceAmount.toLocaleString("en-IN")} mono />
                   <DetailRow label="Discount (₹)" value={selectedLog.discountAmount.toLocaleString("en-IN")} mono />
                   <DetailRow label="Payment Mode" value={selectedLog.paymentMode} />
-                  <DetailRow label="Transaction Ref" value={selectedLog.transactionRef ?? "—"} mono />
+                  <DetailRow label="Transaction Reference Number" value={selectedLog.transactionRef ?? "—"} mono />
                   <DetailRow label="Payment Status" value={selectedLog.paymentStatus} />
                   <DetailRow label="Collected By" value={selectedLog.collectedBy} mono />
                   <DetailRow label="User Role" value={selectedLog.userRole} />

@@ -522,7 +522,7 @@ export function ImageDownloadExportLogs() {
                     paginatedLogs.map((log, idx) => {
                       const srNo = (currentPage - 1) * ITEMS_PER_PAGE + idx + 1;
                       return (
-                        <TableRow key={log.auditId} className="cursor-pointer hover:bg-muted/50" onClick={() => openDetail(log)}>
+                        <TableRow key={log.auditId}>
                           <TableCell className="text-right whitespace-nowrap"><span className="font-mono tabular-nums text-muted-foreground text-sm">{srNo}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="font-mono tabular-nums text-sm">{log.auditId}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="font-mono tabular-nums text-sm">{formatTs(log.exportTimestamp)}</span></TableCell>

@@ -1861,10 +1861,7 @@ export function LoginLogoutLogs() {
                 <TableBody>
                   {paginatedLogs.length > 0 ? (
                     paginatedLogs.map((log) => (
-                      <TableRow
-                        key={log.auditId}
-                        className="hover:bg-muted/50"
-                      >
+                      <TableRow key={log.auditId}>
                         <TableCell className="roboto-mono text-sm tabular-nums whitespace-nowrap">
                           {log.auditId}
                         </TableCell>

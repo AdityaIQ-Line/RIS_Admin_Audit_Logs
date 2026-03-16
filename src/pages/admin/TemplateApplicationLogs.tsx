@@ -1094,7 +1094,7 @@ export function TemplateApplicationLogs() {
                 <TableBody>
                   {paginatedLogs.length > 0 ? (
                     paginatedLogs.map((log) => (
-                      <TableRow key={log.auditId} className="hover:bg-muted/50">
+                      <TableRow key={log.auditId}>
                         <TableCell className="roboto-mono text-sm tabular-nums whitespace-nowrap">{log.auditId}</TableCell>
                         <TableCell className="whitespace-nowrap">{getEventTypeBadge(log.eventType)}</TableCell>
                         <TableCell className="roboto-mono text-sm tabular-nums whitespace-nowrap">{log.accessionNumber}</TableCell>

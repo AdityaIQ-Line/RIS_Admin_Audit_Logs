@@ -1687,10 +1687,7 @@ export function FailedAttemptsTab() {
             <TableBody>
               {paginatedRecords.length > 0 ? (
                 paginatedRecords.map((record) => (
-                  <TableRow
-                    key={record.auditId}
-                    className="hover:bg-muted/50"
-                  >
+                  <TableRow key={record.auditId}>
                     <TableCell className="roboto-mono text-sm tabular-nums whitespace-nowrap">
                       {record.auditId}
                     </TableCell>

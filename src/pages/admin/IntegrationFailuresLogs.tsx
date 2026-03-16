@@ -305,7 +305,7 @@ export function IntegrationFailuresLogs() {
   const filteredLogs = React.useMemo(() => {
     return mockLogs.filter((log) => {
       const q = searchFilter.toLowerCase();
-      if (q && ![log.auditId, log.patientId ?? "", log.accessionNumber ?? "", log.studyUid ?? "", log.failureReason, log.errorCode ?? ""].some((v) => String(v).toLowerCase().includes(q))) return false;
+      if (q && ![log.auditId, log.patientId ?? "", log.accessionNumber ?? "", log.studyUid ?? "", log.modality ?? "", log.failureReason, log.errorCode ?? ""].some((v) => String(v).toLowerCase().includes(q))) return false;
       if (sourceFilter !== "all" && log.sourceSystem !== sourceFilter) return false;
       if (targetFilter !== "all" && log.targetSystem !== targetFilter) return false;
       if (transactionFilter !== "all" && log.transactionType !== transactionFilter) return false;
@@ -397,7 +397,7 @@ export function IntegrationFailuresLogs() {
                   <div className="bg-background relative rounded-[8px] w-80">
                     <div className="flex items-center gap-2 px-3 py-[7.5px]">
                       <Search strokeWidth={ICON_STROKE_WIDTH} className="size-5 text-muted-foreground shrink-0" />
-                      <input placeholder="Search by audit ID, study ID, patient, accession, error…" value={searchFilter} onChange={(e) => setSearchFilter(e.target.value)} className="flex-1 min-w-0 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none" />
+                      <input placeholder="Search by audit ID, study ID, patient, accession, modality, error…" value={searchFilter} onChange={(e) => setSearchFilter(e.target.value)} className="flex-1 min-w-0 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none" />
                     </div>
                     <div aria-hidden="true" className="absolute border border-border inset-[-1px] pointer-events-none rounded-[4px]" />
                   </div>
@@ -474,6 +474,7 @@ export function IntegrationFailuresLogs() {
                     <TableHead className="whitespace-nowrap">Target</TableHead>
                     <TableHead className="whitespace-nowrap">Transaction</TableHead>
                     <TableHead className="whitespace-nowrap">Message Type</TableHead>
+                    <TableHead className="whitespace-nowrap">Modality</TableHead>
                     <TableHead className="whitespace-nowrap">Patient / Accession</TableHead>
                     <TableHead className="whitespace-nowrap">Failure Reason</TableHead>
                     <TableHead className="whitespace-nowrap">Retry</TableHead>
@@ -483,13 +484,13 @@ export function IntegrationFailuresLogs() {
                 <TableBody>
                   {paginatedLogs.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={11} className="text-center py-12 text-muted-foreground">No records found matching the current filters.</TableCell>
+                      <TableCell colSpan={12} className="text-center py-12 text-muted-foreground">No records found matching the current filters.</TableCell>
                     </TableRow>
                   ) : (
                     paginatedLogs.map((log, idx) => {
                       const srNo = (currentPage - 1) * ITEMS_PER_PAGE + idx + 1;
                       return (
-                        <TableRow key={log.auditId} className="cursor-pointer hover:bg-muted/50" onClick={() => openDetail(log)}>
+                        <TableRow key={log.auditId}>
                           <TableCell className="text-right whitespace-nowrap"><span className="font-mono tabular-nums text-muted-foreground text-sm">{srNo}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="font-mono tabular-nums text-sm">{log.auditId}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="font-mono tabular-nums text-sm">{formatTs(log.timestamp)}</span></TableCell>
@@ -497,6 +498,7 @@ export function IntegrationFailuresLogs() {
                           <TableCell className="whitespace-nowrap"><Badge variant="outline">{log.targetSystem}</Badge></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="text-sm">{log.transactionType}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="text-sm">{log.messageType}</span></TableCell>
+                          <TableCell className="whitespace-nowrap"><span className="text-sm">{log.modality ?? "—"}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="font-mono text-xs">{log.patientId ?? "—"} / {log.accessionNumber ?? "—"}</span></TableCell>
                           <TableCell className="max-w-[200px]"><span className="text-sm text-muted-foreground line-clamp-2">{log.failureReason}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="font-mono text-sm">{log.retryCount}</span></TableCell>

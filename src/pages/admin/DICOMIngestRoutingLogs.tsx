@@ -93,8 +93,9 @@ interface DICOMIngestRoutingLog {
   accessionNumber: string;
   patientId: string;
   patientName: string;
-  modality: string;
   studyDateTime: string;
+  referringPhysician: string;
+  modality: string;
   callingAETitle: string;
   calledAETitle: string;
   sourceIP: string;
@@ -122,8 +123,9 @@ const mockLogs: DICOMIngestRoutingLog[] = [
     accessionNumber: "ACC-60001",
     patientId: "UHID-8001",
     patientName: "Patient One",
-    modality: "CT",
     studyDateTime: "2025-01-28 08:00:00",
+    referringPhysician: "Dr. Jane Smith",
+    modality: "CT",
     callingAETitle: "MODALITY_CT1",
     calledAETitle: "RIS_SCP",
     sourceIP: "192.168.10.50",
@@ -147,8 +149,9 @@ const mockLogs: DICOMIngestRoutingLog[] = [
     accessionNumber: "ACC-60001",
     patientId: "UHID-8001",
     patientName: "Patient One",
-    modality: "CT",
     studyDateTime: "2025-01-28 08:00:00",
+    referringPhysician: "Dr. Jane Smith",
+    modality: "CT",
     callingAETitle: "MODALITY_CT1",
     calledAETitle: "RIS_SCP",
     sourceIP: "192.168.10.50",
@@ -172,8 +175,9 @@ const mockLogs: DICOMIngestRoutingLog[] = [
     accessionNumber: "ACC-60001",
     patientId: "UHID-8001",
     patientName: "Patient One",
-    modality: "CT",
     studyDateTime: "2025-01-28 08:00:00",
+    referringPhysician: "Dr. Jane Smith",
+    modality: "CT",
     callingAETitle: "MODALITY_CT1",
     calledAETitle: "RIS_SCP",
     sourceIP: "192.168.10.50",
@@ -197,8 +201,9 @@ const mockLogs: DICOMIngestRoutingLog[] = [
     accessionNumber: "ACC-60002",
     patientId: "UHID-8002",
     patientName: "Patient Two",
-    modality: "MRI",
     studyDateTime: "2025-01-30 10:00:00",
+    referringPhysician: "Dr. Robert Lee",
+    modality: "MRI",
     callingAETitle: "MODALITY_MRI1",
     calledAETitle: "RIS_SCP",
     sourceIP: "192.168.10.51",
@@ -222,8 +227,9 @@ const mockLogs: DICOMIngestRoutingLog[] = [
     accessionNumber: "ACC-60003",
     patientId: "UHID-8003",
     patientName: "Patient Three",
-    modality: "CT",
     studyDateTime: "2025-01-31 11:00:00",
+    referringPhysician: "Dr. Sarah Chen",
+    modality: "CT",
     callingAETitle: "MODALITY_CT2",
     calledAETitle: "RIS_SCP",
     sourceIP: "192.168.10.52",
@@ -247,8 +253,9 @@ const mockLogs: DICOMIngestRoutingLog[] = [
     accessionNumber: "ACC-60004",
     patientId: "UHID-8004",
     patientName: "Patient Four",
-    modality: "CR",
     studyDateTime: "2025-02-01 09:00:00",
+    referringPhysician: "Dr. Michael Brown",
+    modality: "CR",
     callingAETitle: "RIS_SCP",
     calledAETitle: "PACS_ARCHIVE",
     sourceIP: "192.168.20.1",
@@ -272,8 +279,9 @@ const mockLogs: DICOMIngestRoutingLog[] = [
     accessionNumber: "ACC-60005",
     patientId: "UHID-8005",
     patientName: "Patient Five",
-    modality: "US",
     studyDateTime: "2025-02-02 14:00:00",
+    referringPhysician: "Dr. Emily Davis",
+    modality: "US",
     callingAETitle: "RIS",
     calledAETitle: "RIS",
     sourceIP: "192.168.20.1",
@@ -297,8 +305,9 @@ const mockLogs: DICOMIngestRoutingLog[] = [
     accessionNumber: "ACC-60004",
     patientId: "UHID-8004",
     patientName: "Patient Four",
-    modality: "CR",
     studyDateTime: "2025-02-01 09:00:00",
+    referringPhysician: "Dr. Michael Brown",
+    modality: "CR",
     callingAETitle: "RIS_SCP",
     calledAETitle: "PACS_ARCHIVE",
     sourceIP: "192.168.20.1",
@@ -359,7 +368,7 @@ export function DICOMIngestRoutingLogs() {
   const filteredLogs = React.useMemo(() => {
     return mockLogs.filter((log) => {
       const q = searchFilter.toLowerCase();
-      if (q && ![log.auditId, log.accessionNumber, log.patientId, log.patientName, log.errorMessage ?? ""].some((v) => String(v).toLowerCase().includes(q))) return false;
+      if (q && ![log.auditId, log.accessionNumber, log.patientId, log.patientName, log.referringPhysician, log.errorMessage ?? ""].some((v) => String(v).toLowerCase().includes(q))) return false;
       if (eventTypeFilter !== "all" && log.eventType !== eventTypeFilter) return false;
       if (statusFilter === "Success" && log.routingStatus !== "Success") return false;
       if (statusFilter === "Failed" && log.routingStatus !== "Failed") return false;
@@ -450,7 +459,7 @@ export function DICOMIngestRoutingLogs() {
                   <div className="bg-background relative rounded-[8px] w-80">
                     <div className="flex items-center gap-2 px-3 py-[7.5px]">
                       <Search strokeWidth={ICON_STROKE_WIDTH} className="size-5 text-muted-foreground shrink-0" />
-                      <input placeholder="Search by audit ID, accession, UHID, patient, error…" value={searchFilter} onChange={(e) => setSearchFilter(e.target.value)} className="flex-1 min-w-0 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none" />
+                      <input placeholder="Search by audit ID, accession, UHID, patient name, referring physician, error…" value={searchFilter} onChange={(e) => setSearchFilter(e.target.value)} className="flex-1 min-w-0 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none" />
                     </div>
                     <div aria-hidden="true" className="absolute border border-border inset-[-1px] pointer-events-none rounded-[4px]" />
                   </div>
@@ -509,6 +518,9 @@ export function DICOMIngestRoutingLogs() {
                     <TableHead className="whitespace-nowrap">Event Type</TableHead>
                     <TableHead className="whitespace-nowrap">Accession No.</TableHead>
                     <TableHead className="whitespace-nowrap">Patient UHID</TableHead>
+                    <TableHead className="whitespace-nowrap">Patient Name (0010,0010)</TableHead>
+                    <TableHead className="whitespace-nowrap">Study Date & Time</TableHead>
+                    <TableHead className="whitespace-nowrap">Referring Physician</TableHead>
                     <TableHead className="whitespace-nowrap">Modality</TableHead>
                     <TableHead className="whitespace-nowrap">Calling AE</TableHead>
                     <TableHead className="whitespace-nowrap">Destination</TableHead>
@@ -519,19 +531,22 @@ export function DICOMIngestRoutingLogs() {
                 <TableBody>
                   {paginatedLogs.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={11} className="text-center py-12 text-muted-foreground">No records found matching the current filters.</TableCell>
+                      <TableCell colSpan={14} className="text-center py-12 text-muted-foreground">No records found matching the current filters.</TableCell>
                     </TableRow>
                   ) : (
                     paginatedLogs.map((log, idx) => {
                       const srNo = (currentPage - 1) * ITEMS_PER_PAGE + idx + 1;
                       return (
-                        <TableRow key={log.auditId} className="cursor-pointer hover:bg-muted/50" onClick={() => openDetail(log)}>
+                        <TableRow key={log.auditId}>
                           <TableCell className="text-right whitespace-nowrap"><span className="font-mono tabular-nums text-muted-foreground text-sm">{srNo}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="font-mono tabular-nums text-sm">{log.auditId}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="font-mono tabular-nums text-sm">{formatTs(log.serverTimestamp)}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><Badge variant="outline" className="whitespace-nowrap">{log.eventType}</Badge></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="font-mono tabular-nums text-sm">{log.accessionNumber}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="font-mono tabular-nums text-sm">{log.patientId}</span></TableCell>
+                          <TableCell className="whitespace-nowrap"><span className="text-sm">{log.patientName}</span></TableCell>
+                          <TableCell className="whitespace-nowrap"><span className="font-mono tabular-nums text-sm">{formatTs(log.studyDateTime)}</span></TableCell>
+                          <TableCell className="whitespace-nowrap"><span className="text-sm">{log.referringPhysician}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="text-sm">{log.modality}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="font-mono text-xs">{log.callingAETitle}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="text-sm">{log.destinationSystem ?? "—"}</span></TableCell>
@@ -576,7 +591,9 @@ export function DICOMIngestRoutingLogs() {
                   <DetailRow label="Study Instance UID" value={selectedLog.studyInstanceUid} mono />
                   <DetailRow label="Accession Number" value={selectedLog.accessionNumber} mono />
                   <DetailRow label="Patient ID" value={selectedLog.patientId} mono />
-                  <DetailRow label="Patient Name" value={selectedLog.patientName} />
+                  <DetailRow label="Patient Name (0010,0010)" value={selectedLog.patientName} />
+                  <DetailRow label="Study Date & Time" value={formatTs(selectedLog.studyDateTime)} mono />
+                  <DetailRow label="Referring Physician" value={selectedLog.referringPhysician} />
                   <DetailRow label="Modality" value={selectedLog.modality} />
                   <DetailRow label="Calling AE Title" value={selectedLog.callingAETitle} mono />
                   <DetailRow label="Called AE Title" value={selectedLog.calledAETitle} mono />

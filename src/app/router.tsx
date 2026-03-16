@@ -31,6 +31,10 @@ import { ImageDownloadExportLogs } from "../pages/admin/ImageDownloadExportLogs"
 import { DICOMIngestRoutingLogs } from "../pages/admin/DICOMIngestRoutingLogs"
 import { PaymentCollectionLogs } from "../pages/admin/PaymentCollectionLogs"
 import { IntegrationFailuresLogs } from "../pages/admin/IntegrationFailuresLogs"
+import { DataSyncConflictsLogs } from "../pages/admin/DataSyncConflictsLogs"
+import { ViewAuditLogsSearchFilter } from "../pages/admin/ViewAuditLogsSearchFilter"
+import { ExportAuditLogs } from "../pages/admin/ExportAuditLogs"
+import { RoleBasedAuditVisibility } from "../pages/admin/RoleBasedAuditVisibility"
 import { SystemSettings } from "../pages/admin/SystemSettings"
 import { AdminWorklist } from "../pages/admin/AdminWorklist"
 import { AdminFacilityDetails } from "../pages/admin/AdminFacilityDetails"
@@ -93,6 +97,10 @@ export const router = createBrowserRouter([
           { path: "/admin/dicom-ingest-routing-logs", element: <DICOMIngestRoutingLogs /> },
           { path: "/admin/payment-collection-logs", element: <PaymentCollectionLogs /> },
           { path: "/admin/integration-failures-logs", element: <IntegrationFailuresLogs /> },
+          { path: "/admin/data-sync-conflicts-logs", element: <DataSyncConflictsLogs /> },
+          { path: "/admin/view-audit-logs-search-filter", element: <ViewAuditLogsSearchFilter /> },
+          { path: "/admin/export-audit-logs", element: <ExportAuditLogs /> },
+          { path: "/admin/role-based-audit-visibility", element: <RoleBasedAuditVisibility /> },
           { path: "/admin/settings", element: <Navigate to="/admin/audit-logs" replace /> },
           { path: "/admin/worklist", element: <Navigate to="/admin/audit-logs" replace /> },
           { path: "/admin/facility", element: <Navigate to="/admin/audit-logs" replace /> },
