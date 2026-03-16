@@ -73,24 +73,32 @@ type ExportFormat = "CSV" | "Excel" | "PDF";
 type ExportStatus = "Success" | "Failed";
 
 interface ExportAuditLogEntry {
+  // Core Audit Fields (Story 22)
   auditId: string;
   eventType: string;
   moduleName: string;
+  patientId: string | null; // UHID – masked if required
   username: string;
   userRole: string;
   facilityId: string;
-  timestamp: string;
+  timestamp: string; // Server Time
+  ipAddress: string | null;
+  deviceType: string | null;
+  sessionId: string | null;
+  status: ExportStatus; // Success / Failed
+  errorCode: string | null;
+  triggeredBy: "User" | "System"; // User/System per Story 22
+  changeReason: string | null;
+  // Extended Fields (Optional) – Story 22
+  beforeSnapshot: string | null; // JSON
+  afterSnapshot: string | null; // JSON
+  severity: string | null; // if applicable
+  criticalFlagStatus: string | null;
+  // Export-specific
   exportFormat: ExportFormat;
   rowCount: number;
   dateRangeFrom: string;
   dateRangeTo: string;
-  status: ExportStatus;
-  errorCode: string | null;
-  triggeredBy: "User" | "Scheduled";
-  sessionId: string | null;
-  ipAddress: string | null;
-  deviceType: string | null;
-  changeReason: string | null;
 }
 
 const ITEMS_PER_PAGE = 10;
@@ -100,81 +108,101 @@ const mockLogs: ExportAuditLogEntry[] = [
     auditId: "EXP-A-10001",
     eventType: "Audit Logs Exported",
     moduleName: "Audit Logs",
+    patientId: null,
     username: "admin@facility.com",
     userRole: "Facility Admin",
     facilityId: "FAC-001",
     timestamp: "2025-02-01 10:00:00",
+    ipAddress: "192.168.20.102",
+    deviceType: "Web",
+    sessionId: "SESS-002",
+    status: "Success",
+    errorCode: null,
+    triggeredBy: "User",
+    changeReason: null,
+    beforeSnapshot: null,
+    afterSnapshot: null,
+    severity: "Low",
+    criticalFlagStatus: "No",
     exportFormat: "CSV",
     rowCount: 2500,
     dateRangeFrom: "2025-01-01",
     dateRangeTo: "2025-01-31",
-    status: "Success",
-    errorCode: null,
-    triggeredBy: "User",
-    sessionId: "SESS-002",
-    ipAddress: "192.168.20.102",
-    deviceType: "Web",
-    changeReason: null,
   },
   {
     auditId: "EXP-A-10002",
     eventType: "Audit Logs Exported",
     moduleName: "Audit Logs",
+    patientId: null,
     username: "compliance@facility.com",
     userRole: "Compliance Officer",
     facilityId: "FAC-001",
     timestamp: "2025-02-01 14:30:00",
+    ipAddress: "192.168.20.105",
+    deviceType: "Web",
+    sessionId: "SESS-005",
+    status: "Success",
+    errorCode: null,
+    triggeredBy: "User",
+    changeReason: null,
+    beforeSnapshot: null,
+    afterSnapshot: null,
+    severity: "Low",
+    criticalFlagStatus: "No",
     exportFormat: "PDF",
     rowCount: 1200,
     dateRangeFrom: "2025-01-15",
     dateRangeTo: "2025-01-31",
-    status: "Success",
-    errorCode: null,
-    triggeredBy: "User",
-    sessionId: "SESS-005",
-    ipAddress: "192.168.20.105",
-    deviceType: "Web",
-    changeReason: null,
   },
   {
     auditId: "EXP-A-10003",
     eventType: "Audit Logs Exported",
     moduleName: "Audit Logs",
+    patientId: null,
     username: "itadmin@facility.com",
     userRole: "IT Admin",
     facilityId: "FAC-001",
     timestamp: "2025-02-02 09:15:00",
+    ipAddress: "192.168.20.108",
+    deviceType: "Web",
+    sessionId: "SESS-008",
+    status: "Failed",
+    errorCode: "EXPORT-LIMIT",
+    triggeredBy: "User",
+    changeReason: "No records in range",
+    beforeSnapshot: null,
+    afterSnapshot: null,
+    severity: "Medium",
+    criticalFlagStatus: "No",
     exportFormat: "Excel",
     rowCount: 0,
     dateRangeFrom: "2025-02-01",
     dateRangeTo: "2025-02-02",
-    status: "Failed",
-    errorCode: "EXPORT-LIMIT",
-    triggeredBy: "User",
-    sessionId: "SESS-008",
-    ipAddress: "192.168.20.108",
-    deviceType: "Web",
-    changeReason: "No records in range",
   },
   {
     auditId: "EXP-A-10004",
     eventType: "Audit Logs Exported",
     moduleName: "Audit Logs",
+    patientId: null,
     username: "system",
     userRole: "System",
     facilityId: "FAC-001",
     timestamp: "2025-02-02 23:00:00",
+    ipAddress: null,
+    deviceType: null,
+    sessionId: null,
+    status: "Success",
+    errorCode: null,
+    triggeredBy: "System",
+    changeReason: "Scheduled monthly export",
+    beforeSnapshot: null,
+    afterSnapshot: null,
+    severity: null,
+    criticalFlagStatus: null,
     exportFormat: "CSV",
     rowCount: 50000,
     dateRangeFrom: "2025-01-01",
     dateRangeTo: "2025-01-31",
-    status: "Success",
-    errorCode: null,
-    triggeredBy: "Scheduled",
-    sessionId: null,
-    ipAddress: null,
-    deviceType: null,
-    changeReason: "Scheduled monthly export",
   },
 ];
 
@@ -220,7 +248,7 @@ export function ExportAuditLogs() {
   const filteredLogs = React.useMemo(() => {
     return mockLogs.filter((log) => {
       const q = searchFilter.toLowerCase();
-      if (q && ![log.auditId, log.username, log.userRole, log.facilityId, log.exportFormat].some((v) => String(v).toLowerCase().includes(q))) return false;
+      if (q && ![log.auditId, log.eventType, log.moduleName, log.username, log.userRole, log.facilityId, log.exportFormat, log.sessionId, log.severity, log.criticalFlagStatus, log.changeReason].some((v) => String(v ?? "").toLowerCase().includes(q))) return false;
       if (formatFilter !== "all" && log.exportFormat !== formatFilter) return false;
       if (statusFilter !== "all" && log.status !== statusFilter) return false;
       if (isDateRangeActive) {
@@ -354,21 +382,32 @@ export function ExportAuditLogs() {
                   <TableRow>
                     <TableHead className="text-right w-12 whitespace-nowrap">Sr.</TableHead>
                     <TableHead className="whitespace-nowrap">Audit ID</TableHead>
+                    <TableHead className="whitespace-nowrap">Event Type</TableHead>
+                    <TableHead className="whitespace-nowrap">Module</TableHead>
+                    <TableHead className="whitespace-nowrap">Patient ID</TableHead>
                     <TableHead className="whitespace-nowrap">Timestamp</TableHead>
                     <TableHead className="whitespace-nowrap">User</TableHead>
                     <TableHead className="whitespace-nowrap">Role</TableHead>
                     <TableHead className="whitespace-nowrap">Facility</TableHead>
+                    <TableHead className="whitespace-nowrap">IP Address</TableHead>
+                    <TableHead className="whitespace-nowrap">Device</TableHead>
+                    <TableHead className="whitespace-nowrap">Session ID</TableHead>
                     <TableHead className="whitespace-nowrap">Format</TableHead>
                     <TableHead className="whitespace-nowrap">Row Count</TableHead>
                     <TableHead className="whitespace-nowrap">Date Range</TableHead>
                     <TableHead className="whitespace-nowrap">Status</TableHead>
+                    <TableHead className="whitespace-nowrap">Error Code</TableHead>
+                    <TableHead className="whitespace-nowrap">Triggered By</TableHead>
+                    <TableHead className="whitespace-nowrap max-w-[120px]">Change Reason</TableHead>
+                    <TableHead className="whitespace-nowrap">Severity</TableHead>
+                    <TableHead className="whitespace-nowrap">Critical Flag Status</TableHead>
                     <TableHead className="whitespace-nowrap w-20">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {paginatedLogs.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={11} className="text-center py-12 text-muted-foreground">No records found matching the current filters.</TableCell>
+                      <TableCell colSpan={21} className="text-center py-12 text-muted-foreground">No records found matching the current filters.</TableCell>
                     </TableRow>
                   ) : (
                     paginatedLogs.map((log, idx) => {
@@ -377,10 +416,16 @@ export function ExportAuditLogs() {
                         <TableRow key={log.auditId}>
                           <TableCell className="text-right whitespace-nowrap"><span className="font-mono tabular-nums text-muted-foreground text-sm">{srNo}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="font-mono tabular-nums text-sm">{log.auditId}</span></TableCell>
+                          <TableCell className="whitespace-nowrap"><span className="text-sm">{log.eventType}</span></TableCell>
+                          <TableCell className="whitespace-nowrap"><span className="text-sm">{log.moduleName}</span></TableCell>
+                          <TableCell className="whitespace-nowrap"><span className="font-mono text-xs text-muted-foreground">{log.patientId ?? "—"}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="font-mono tabular-nums text-sm">{formatTs(log.timestamp)}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="text-sm">{log.username}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="text-sm">{log.userRole}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="font-mono text-xs">{log.facilityId}</span></TableCell>
+                          <TableCell className="whitespace-nowrap"><span className="font-mono text-xs">{log.ipAddress ?? "—"}</span></TableCell>
+                          <TableCell className="whitespace-nowrap"><span className="text-xs">{log.deviceType ?? "—"}</span></TableCell>
+                          <TableCell className="whitespace-nowrap"><span className="font-mono text-xs">{log.sessionId ?? "—"}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><Badge variant="outline">{log.exportFormat}</Badge></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="font-mono text-sm">{log.rowCount.toLocaleString()}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="font-mono text-xs">{log.dateRangeFrom} – {log.dateRangeTo}</span></TableCell>
@@ -388,6 +433,11 @@ export function ExportAuditLogs() {
                             {log.status === "Success" && <Badge variant="default" className="gap-1"><CheckCircle strokeWidth={ICON_STROKE_WIDTH} className="size-3" />Success</Badge>}
                             {log.status === "Failed" && <Badge variant="destructive" className="gap-1"><XCircle strokeWidth={ICON_STROKE_WIDTH} className="size-3" />Failed</Badge>}
                           </TableCell>
+                          <TableCell className="whitespace-nowrap"><span className="font-mono text-xs">{log.errorCode ?? "—"}</span></TableCell>
+                          <TableCell className="whitespace-nowrap"><span className="text-sm">{log.triggeredBy}</span></TableCell>
+                          <TableCell className="max-w-[120px] truncate" title={log.changeReason ?? undefined}><span className="text-xs text-muted-foreground">{log.changeReason ?? "—"}</span></TableCell>
+                          <TableCell className="whitespace-nowrap"><span className="text-xs">{log.severity ?? "—"}</span></TableCell>
+                          <TableCell className="whitespace-nowrap"><span className="text-xs">{log.criticalFlagStatus ?? "—"}</span></TableCell>
                           <TableCell className="whitespace-nowrap">
                             <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={(e) => { e.stopPropagation(); openDetail(log); }}>View</Button>
                           </TableCell>
@@ -417,25 +467,40 @@ export function ExportAuditLogs() {
           {selectedLog && (
             <div className="space-y-4 pt-1">
               <div>
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">Export Summary</p>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">Core Audit Fields (Story 22)</p>
                 <div className="grid grid-cols-1 gap-y-0">
                   <DetailRow label="Audit ID" value={selectedLog.auditId} mono />
                   <DetailRow label="Event Type" value={selectedLog.eventType} />
-                  <DetailRow label="Module" value={selectedLog.moduleName} />
+                  <DetailRow label="Module Name" value={selectedLog.moduleName} />
+                  <DetailRow label="Patient ID (UHID – masked if required)" value={selectedLog.patientId ?? "—"} mono />
                   <DetailRow label="Username" value={selectedLog.username} />
                   <DetailRow label="User Role" value={selectedLog.userRole} />
                   <DetailRow label="Facility ID" value={selectedLog.facilityId} mono />
-                  <DetailRow label="Timestamp" value={formatTs(selectedLog.timestamp)} mono />
+                  <DetailRow label="Timestamp (Server Time)" value={formatTs(selectedLog.timestamp)} mono />
+                  <DetailRow label="IP Address" value={selectedLog.ipAddress ?? "—"} mono />
+                  <DetailRow label="Device Type" value={selectedLog.deviceType ?? "—"} />
+                  <DetailRow label="Session ID" value={selectedLog.sessionId ?? "—"} mono />
+                  <DetailRow label="Status (Success / Failed)" value={selectedLog.status} />
+                  <DetailRow label="Error Code (if applicable)" value={selectedLog.errorCode ?? "—"} mono />
+                  <DetailRow label="Triggered By (User/System)" value={selectedLog.triggeredBy} />
+                  <DetailRow label="Change Reason" value={selectedLog.changeReason ?? "—"} />
+                </div>
+              </div>
+              <div>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">Extended Fields (Optional)</p>
+                <div className="grid grid-cols-1 gap-y-0">
+                  <DetailRow label="Before Snapshot (JSON)" value={selectedLog.beforeSnapshot ? <pre className="text-xs font-mono whitespace-pre-wrap break-all max-h-32 overflow-y-auto bg-muted/50 p-2 rounded">{selectedLog.beforeSnapshot}</pre> : "—"} />
+                  <DetailRow label="After Snapshot (JSON)" value={selectedLog.afterSnapshot ? <pre className="text-xs font-mono whitespace-pre-wrap break-all max-h-32 overflow-y-auto bg-muted/50 p-2 rounded">{selectedLog.afterSnapshot}</pre> : "—"} />
+                  <DetailRow label="Severity (if applicable)" value={selectedLog.severity ?? "—"} />
+                  <DetailRow label="Critical Flag Status" value={selectedLog.criticalFlagStatus ?? "—"} />
+                </div>
+              </div>
+              <div>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">Export Summary</p>
+                <div className="grid grid-cols-1 gap-y-0">
                   <DetailRow label="Export Format" value={selectedLog.exportFormat} />
                   <DetailRow label="Row Count" value={selectedLog.rowCount.toLocaleString()} mono />
                   <DetailRow label="Date Range" value={`${selectedLog.dateRangeFrom} – ${selectedLog.dateRangeTo}`} mono />
-                  <DetailRow label="Status" value={selectedLog.status} />
-                  <DetailRow label="Error Code" value={selectedLog.errorCode ?? "—"} mono />
-                  <DetailRow label="Triggered By" value={selectedLog.triggeredBy} />
-                  <DetailRow label="Session ID" value={selectedLog.sessionId ?? "—"} mono />
-                  <DetailRow label="IP Address" value={selectedLog.ipAddress ?? "—"} mono />
-                  <DetailRow label="Device Type" value={selectedLog.deviceType ?? "—"} />
-                  <DetailRow label="Change Reason" value={selectedLog.changeReason ?? "—"} />
                 </div>
               </div>
             </div>

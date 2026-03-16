@@ -432,19 +432,25 @@ export function DataSyncConflictsLogs() {
                     <TableHead className="whitespace-nowrap">Source → Target</TableHead>
                     <TableHead className="whitespace-nowrap">Integration Type</TableHead>
                     <TableHead className="whitespace-nowrap">Category</TableHead>
-                    <TableHead className="whitespace-nowrap">Patient / Accession</TableHead>
+                    <TableHead className="whitespace-nowrap">Patient ID / Accession No.</TableHead>
+                    <TableHead className="whitespace-nowrap">Patient Name</TableHead>
                     <TableHead className="whitespace-nowrap">Modality</TableHead>
                     <TableHead className="whitespace-nowrap">Field</TableHead>
                     <TableHead className="whitespace-nowrap">Facility</TableHead>
                     <TableHead className="whitespace-nowrap">Source vs Target</TableHead>
-                    <TableHead className="whitespace-nowrap">Status</TableHead>
+                    <TableHead className="whitespace-nowrap">Conflict Status</TableHead>
+                    <TableHead className="whitespace-nowrap">Resolution Action</TableHead>
+                    <TableHead className="whitespace-nowrap">Resolution Remarks</TableHead>
+                    <TableHead className="whitespace-nowrap">Resolved By</TableHead>
+                    <TableHead className="whitespace-nowrap">Logged By</TableHead>
+                    <TableHead className="whitespace-nowrap">Resolution Timestamp</TableHead>
                     <TableHead className="whitespace-nowrap w-20">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {paginatedLogs.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={13} className="text-center py-12 text-muted-foreground">No records found matching the current filters.</TableCell>
+                      <TableCell colSpan={19} className="text-center py-12 text-muted-foreground">No records found matching the current filters.</TableCell>
                     </TableRow>
                   ) : (
                     paginatedLogs.map((log, idx) => {
@@ -458,6 +464,7 @@ export function DataSyncConflictsLogs() {
                           <TableCell className="whitespace-nowrap"><span className="text-sm">{log.integrationType}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="text-sm">{log.conflictCategory}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="font-mono text-xs">{log.patientId} / {log.accessionNumber}</span></TableCell>
+                          <TableCell className="whitespace-nowrap"><span className="text-sm">{log.patientName}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="text-sm">{log.modality}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="text-sm">{log.fieldName}</span></TableCell>
                           <TableCell className="whitespace-nowrap"><span className="font-mono text-xs">{log.facilityId}</span></TableCell>
@@ -467,6 +474,11 @@ export function DataSyncConflictsLogs() {
                             {log.conflictStatus === "Under Review" && <Badge variant="secondary">Under Review</Badge>}
                             {log.conflictStatus === "Resolved" && <Badge variant="default" className="gap-1"><CheckCircle strokeWidth={ICON_STROKE_WIDTH} className="size-3" />Resolved</Badge>}
                           </TableCell>
+                          <TableCell className="whitespace-nowrap"><span className="text-sm">{log.resolutionAction ?? "—"}</span></TableCell>
+                          <TableCell className="max-w-[140px]"><span className="text-xs text-muted-foreground line-clamp-2">{log.resolutionNotes ?? "—"}</span></TableCell>
+                          <TableCell className="whitespace-nowrap"><span className="text-sm">{log.resolvedBy ?? "—"}</span></TableCell>
+                          <TableCell className="whitespace-nowrap"><span className="text-sm">{log.loggedBy}</span></TableCell>
+                          <TableCell className="whitespace-nowrap"><span className="font-mono text-xs">{log.resolutionTimestamp ? formatTs(log.resolutionTimestamp) : "—"}</span></TableCell>
                           <TableCell className="whitespace-nowrap">
                             <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={(e) => { e.stopPropagation(); openDetail(log); }}>View</Button>
                           </TableCell>
